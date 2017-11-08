@@ -13,7 +13,7 @@
     <modules>
         <module>tooling-vacation</module>
         <module>tooling-zuul</module>
-        <module>tooling-cra</module>
+        <module>tooling-project</module>
     </modules>
 
     <properties>

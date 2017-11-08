@@ -1,20 +1,19 @@
-package com.tooling.vacation.router
+package com.tooling.project.router
 
-import com.tooling.vacation.handler.VacationHandler
+import com.tooling.project.handler.ProjectHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.server.router
 
 @Configuration
-open class VacationRouter(private val vacationHandler: VacationHandler) {
+open class ProjectRouter(private val projectHandler: ProjectHandler) {
 
   @Bean
   open fun vacationApis() = router {
     (accept(MediaType.APPLICATION_JSON) and "/").nest {
-      GET("/", { _ -> vacationHandler.find() })
-      POST("/", vacationHandler::create)
-      PUT("/{id}", vacationHandler::update)
+      GET("/", { _ -> projectHandler.find() })
+      POST("/", projectHandler::create)
     }
   }
 }
