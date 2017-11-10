@@ -1,0 +1,15 @@
+{
+  "instance": {
+    "data": [
+      {
+        "_id": "123456",
+        "_class": "com.tooling.instance.model.Instance",
+        "name": "Test1"
+      },{
+        "_id": "234567",
+        "_class": "com.tooling.instance.model.Instance",
+        "name": "Test2"
+      }
+    ]
+  }
+}

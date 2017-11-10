@@ -1,0 +1,10 @@
+---
+
+users:
+- email: admin@tooling.ovh
+  password: password
+  firstName: Admin
+  lastName: Admin
+  groups:
+  - ADMIN
+  active: true

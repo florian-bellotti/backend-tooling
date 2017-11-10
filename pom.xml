@@ -11,6 +11,9 @@
     <name>Tooling</name>
 
     <modules>
+        <module>tooling-core</module>
+        <module>tooling-instance</module>
+        <module>tooling-user</module>
         <module>tooling-vacation</module>
         <module>tooling-zuul</module>
         <module>tooling-project</module>
@@ -87,14 +90,6 @@
             <url>https://repo.spring.io/snapshot</url>
             <snapshots>
                 <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
