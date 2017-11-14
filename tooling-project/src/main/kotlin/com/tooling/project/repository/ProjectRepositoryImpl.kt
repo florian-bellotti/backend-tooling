@@ -10,7 +10,9 @@ import reactor.core.publisher.Mono
 
 class ProjectRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemplate): ProjectRepositoryCustom {
   override fun update(project: Project): Mono<UpdateResult> {
-    val query = Query(Criteria.where("code").`is`(project.code))
+    val query = Query(Criteria
+      .where("code").`is`(project.code)
+      .and("tenantId").`is`(project.tenantId))
     val update = Update()
     update.set("name", project.name)
     update.set("status", project.status)

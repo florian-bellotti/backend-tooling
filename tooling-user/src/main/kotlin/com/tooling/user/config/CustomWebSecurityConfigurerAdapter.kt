@@ -34,6 +34,6 @@ open class CustomWebSecurityConfigurerAdapter(val xAuthTokenFilter: AuthTokenFil
       .antMatchers(GET, "/health").anonymous()
       .antMatchers(GET, "/info").anonymous()
       .antMatchers(POST, "/users/authenticate").anonymous()
-      .antMatchers("/**").authenticated()
+      //.antMatchers("/**").authenticated()
   }
 }

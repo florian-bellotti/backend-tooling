@@ -1,9 +1,9 @@
 zuul:
   routes:
     vacations:
-      url: http://localhost:8081
+      url: http://vacation
     projects:
-      url: http://localhost:8082
+      url: http://project
 
 ribbon:
   eureka:
@@ -19,5 +19,5 @@ tooling:
 
 spring:
   data:
-    mongodb.uri: mongodb://localhost:27017/tooling
+    mongodb.uri: mongodb://mongo/tooling
 

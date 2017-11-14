@@ -1,0 +1,26 @@
+version: "2"
+services:
+  mongo:
+    image: mongo:latest
+    expose:
+      - "27017"
+  vacation:
+    image: tooling/tooling-vacation
+    links:
+      - mongo
+    depends_on:
+      - mongo
+  project:
+    image: tooling/tooling-project
+    links:
+      - mongo
+    depends_on:
+      - mongo
+  api:
+    image: tooling/tooling-zuul
+    ports:
+        - 8080:8080
+    links:
+      - mongo
+    depends_on:
+      - mongo
