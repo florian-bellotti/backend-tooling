@@ -14,6 +14,7 @@ open class ProjectRouter(private val projectHandler: ProjectHandler) {
     (accept(MediaType.APPLICATION_JSON) and "/").nest {
       GET("/", projectHandler::find)
       POST("/", projectHandler::create)
+      PUT("/", projectHandler::update)
     }
   }
 }

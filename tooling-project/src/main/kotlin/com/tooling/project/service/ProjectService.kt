@@ -1,8 +1,9 @@
 package com.tooling.project.service
 
+import com.mongodb.client.result.UpdateResult
 import com.tooling.project.exception.InvalidProjectException
 import com.tooling.project.model.Project
-import com.tooling.project.model.ProjectRequest
+import com.tooling.project.model.ProjectDto
 import com.tooling.project.repository.ProjectRepository
 import com.tooling.tenant.exception.InvalidTenantIdException
 import org.springframework.stereotype.Component
@@ -23,13 +24,25 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     return tenantIds.get(0)!!
   }
 
-  fun insert(projectReq: ProjectRequest?, request: ServerRequest): Mono<Project> {
-    if (projectReq == null)
-      throw InvalidProjectException("Project is null")
-
-    val tenantId = getTenantIdFromHeader(request)
-    val project = Project(projectReq.code, projectReq.name, projectReq.status, tenantId)
-
+  fun insert(projectDto: ProjectDto?, request: ServerRequest): Mono<Project> {
+    checkProjectDto(projectDto)
+    val project = mapProjectDtoToProject(projectDto!!, request)
     return projectRepository.insert(project)
+  }
+
+  fun update(projectDto: ProjectDto?, request: ServerRequest): Mono<UpdateResult> {
+    checkProjectDto(projectDto)
+    val project = mapProjectDtoToProject(projectDto!!, request)
+    return projectRepository.update(project)
+  }
+
+  private fun checkProjectDto(projectDto: ProjectDto?) {
+    if (projectDto == null)
+      throw InvalidProjectException("Project is null")
+  }
+
+  private fun mapProjectDtoToProject(projectDto: ProjectDto, request: ServerRequest): Project {
+    val tenantId = getTenantIdFromHeader(request)
+    return Project(projectDto.code, projectDto.name, projectDto.status, tenantId)
   }
 }

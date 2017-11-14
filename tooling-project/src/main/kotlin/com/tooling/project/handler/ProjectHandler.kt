@@ -1,7 +1,8 @@
 package com.tooling.project.handler
 
+import com.mongodb.client.result.UpdateResult
 import com.tooling.project.model.Project
-import com.tooling.project.model.ProjectRequest
+import com.tooling.project.model.ProjectDto
 import com.tooling.project.repository.ProjectRepository
 import com.tooling.project.service.ProjectService
 import org.springframework.stereotype.Component
@@ -18,12 +19,23 @@ class ProjectHandler(private val projectService: ProjectService,
       .just(request)
       .map(projectService::getTenantIdFromHeader)
       .transform { tenantId ->
-        ServerResponse.ok().body(projectRepository.findByTenantId(tenantId), Project::class.java)
+        ServerResponse.ok().body(
+          projectRepository
+            .findByTenantId(tenantId)
+            .map { project -> ProjectDto(project) }, ProjectDto::class.java)
       }
 
   fun create(request: ServerRequest): Mono<ServerResponse> =
     request
-      .bodyToMono(ProjectRequest::class.java)
+      .bodyToMono(ProjectDto::class.java)
       .flatMap { project -> projectService.insert(project, request) }
-      .transform { createdProject -> ServerResponse.ok().body(createdProject, Project::class.java) }
+      .transform { createdProject ->
+        ServerResponse.ok().body(createdProject
+          .map { project -> ProjectDto(project) }, ProjectDto::class.java) }
+
+  fun update(request: ServerRequest): Mono<ServerResponse> =
+    request
+      .bodyToMono(ProjectDto::class.java)
+      .flatMap { project -> projectService.update(project, request) }
+      .transform { result -> ServerResponse.ok().body(result, UpdateResult::class.java) }
 }
