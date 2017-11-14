@@ -12,7 +12,7 @@ import java.util.*
 
 @Document
 @CompoundIndexes(
-  CompoundIndex(name = "user_email_instanceId_idx", def = "{ 'email': 1, 'instanceId': 1 }", background = true)
+  CompoundIndex(name = "user_email_tenantId_idx", def = "{ 'email': 1, 'tenantId': 1 }", background = true)
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class User(@Id
@@ -28,5 +28,5 @@ data class User(@Id
                 var locale: Locale = Locale.getDefault(),
                 var activationDate: Instant = now(),
                 var creationDate: Instant = now(),
-                val instanceId: String)
+                val tenantId: String)
 

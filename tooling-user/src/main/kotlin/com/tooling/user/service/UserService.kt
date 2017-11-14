@@ -1,7 +1,7 @@
 package com.tooling.user.service
 
-import com.tooling.instance.model.Instance
-import com.tooling.instance.service.InstanceService
+import com.tooling.tenant.model.Tenant
+import com.tooling.tenant.service.TenantService
 import com.tooling.user.jackson.YamlObjectMapper
 import com.tooling.user.model.TmpUser
 import com.tooling.user.model.User
@@ -16,7 +16,7 @@ data class UsersContainer(var users: MutableList<TmpUser>)
 
 @Service
 open class UserService(private val userRepository: UserRepository,
-                       private val instanceService: InstanceService) {
+                       private val tenantService: TenantService) {
 
   private val yamlObjectMapper: YamlObjectMapper
 
@@ -30,12 +30,12 @@ open class UserService(private val userRepository: UserRepository,
 
   @PostConstruct
   fun insertDefaultUsers() =
-    instanceService
+    tenantService
       .findAll()
       .subscribe(this::insertDefaultUsersByInstance)
 
-  fun insertDefaultUsersByInstance(instance: Instance) {
-    val count = userRepository.countByInstanceId(instance.id!!)
+  fun insertDefaultUsersByInstance(tenant: Tenant) {
+    val count = userRepository.countByTenantId(tenant.id!!)
 
     if (count <= 0) {
       val usersStream = UserService::class.java.getResourceAsStream("defaultUsers.yml")
@@ -45,7 +45,7 @@ open class UserService(private val userRepository: UserRepository,
           it.password = hashpw(it.password, gensalt())
 
           val user = userRepository.insert(User(null, it.email, it.password, it.firstName, it.lastName, it.groups,
-            it.address, it.phone, it.active, it.locale, it.activationDate, it.creationDate, instance.id!!))
+            it.address, it.phone, it.active, it.locale, it.activationDate, it.creationDate, tenant.id!!))
           logger.info("user {} created", it)}
         }
     }

@@ -1,8 +1,9 @@
 package com.tooling.user.security
 
 import com.tooling.core.http.RemoteIPResolver
-import com.tooling.instance.exception.InvalidInstanceIdException
+import com.tooling.tenant.exception.InvalidTenantIdException
 import com.tooling.user.exception.InvalidTokenException
+import com.tooling.user.model.MutableHttpServletRequest
 import com.tooling.user.model.User
 import com.tooling.user.service.AuthenticationService
 import io.jsonwebtoken.JwtException
@@ -32,16 +33,19 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
   override fun doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain) {
     val httpServletRequest = servletRequest as HttpServletRequest
     val authToken = httpServletRequest.getHeader(TOKEN_HEADER_NAME)?.replace("Bearer ", "") ?: ""
+    val mutableRequest = MutableHttpServletRequest(httpServletRequest)
 
     try {
       if (StringUtils.hasText(authToken)) {
-        val userInstance = buildUserFromToken(authToken)
-        SecurityContextHolder.getContext().authentication = KeybuildAuthentication(userInstance.user)
+        val userTenant = buildUserFromToken(authToken)
+        SecurityContextHolder.getContext().authentication = KeybuildAuthentication(userTenant.user)
+
+        mutableRequest.putHeader("tenantId", userTenant.tenantId)
       } else {
         SecurityContextHolder.getContext().authentication = null
       }
 
-      filterChain.doFilter(servletRequest, servletResponse)
+      filterChain.doFilter(mutableRequest, servletResponse)
     } catch (ex: InvalidTokenException) {
       Companion.logger.debug("{} token invalid from {}: {}", TOKEN_HEADER_NAME,
         RemoteIPResolver.resolveRemoteIP(httpServletRequest), ex.message)
@@ -52,23 +56,23 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
   }
 
   @Suppress("UNCHECKED_CAST")
-  private fun buildUserFromToken(authToken: String): UserInstance {
+  private fun buildUserFromToken(authToken: String): UserTenant {
     try {
       val claims = jwtParser.parseClaimsJws(authToken).body
       val grpClaims = claims["grp"]
       val groups = if (grpClaims == null) mutableListOf() else grpClaims as MutableList<String>
-      val instanceId = claims[AuthenticationService.INSTANCE_ID] as String?
-      if (!StringUtils.hasText(instanceId)) {
-        throw InvalidInstanceIdException("Instance id is null or empty in JWT.")
+      val tenantId = claims[AuthenticationService.TENANT_ID] as String?
+      if (!StringUtils.hasText(tenantId)) {
+        throw InvalidTenantIdException("Tenant id is null or empty in JWT.")
       }
-      val user = User(email = claims.subject, password = "", groups = groups, instanceId = instanceId!!)
+      val user = User(email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
 
-      return UserInstance(user, instanceId)
+      return UserTenant(user, tenantId)
     } catch (e: JwtException) {
       throw InvalidTokenException(e.message)
     }
   }
 }
 
-internal data class UserInstance(val user: User,
-                                 val instanceId: String)
+internal data class UserTenant(val user: User,
+                               val tenantId: String)

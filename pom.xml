@@ -12,7 +12,7 @@
 
     <modules>
         <module>tooling-core</module>
-        <module>tooling-instance</module>
+        <module>tooling-tenant</module>
         <module>tooling-user</module>
         <module>tooling-vacation</module>
         <module>tooling-zuul</module>

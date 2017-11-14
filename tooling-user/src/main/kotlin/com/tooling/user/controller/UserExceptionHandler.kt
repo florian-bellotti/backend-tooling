@@ -1,20 +1,22 @@
 package com.tooling.user.controller
 
-import com.tooling.instance.exception.InvalidInstanceIdException
+import com.tooling.tenant.exception.InvalidTenantIdException
 import com.tooling.user.exception.DisabledUserException
 import com.tooling.user.exception.InvalidCredentialsException
 import com.tooling.user.model.ErrorMessage
 import io.jsonwebtoken.JwtException
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.http.HttpStatus.*
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseBody
 @ControllerAdvice
 open class UserExceptionHandler {
   @ResponseStatus(BAD_REQUEST)
-  @ExceptionHandler(InvalidInstanceIdException::class)
-  fun handleInvalidInstanceIdException() = ErrorMessage("BAD_REQUEST", "Instance id is invalid")
+  @ExceptionHandler(InvalidTenantIdException::class)
+  fun handleInvalidInstanceIdException() = ErrorMessage("BAD_REQUEST", "Tenant id is invalid")
 
   @ResponseStatus(UNAUTHORIZED)
   @ExceptionHandler(JwtException::class)

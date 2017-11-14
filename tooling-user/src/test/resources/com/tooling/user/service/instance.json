@@ -1,13 +1,13 @@
 {
-  "instance": {
+  "tenant": {
     "data": [
       {
         "_id": "123456",
-        "_class": "com.tooling.instance.model.Instance",
+        "_class": "com.tooling.tenant.model.Tenant",
         "name": "Test1"
       },{
         "_id": "234567",
-        "_class": "com.tooling.instance.model.Instance",
+        "_class": "com.tooling.tenant.model.Tenant",
         "name": "Test2"
       }
     ]

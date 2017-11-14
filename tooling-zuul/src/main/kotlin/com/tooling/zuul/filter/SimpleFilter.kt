@@ -13,6 +13,7 @@ class SimpleFilter: ZuulFilter() {
   override fun run(): Any? {
     val ctx = RequestContext.getCurrentContext()
     val request = ctx.getRequest()
+    ctx.addZuulRequestHeader("tenantId", "123456")
     logger.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()))
     return null
   }

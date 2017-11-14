@@ -5,4 +5,4 @@ import com.fasterxml.jackson.annotation.JsonInclude
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class UserLogin(var email: String,
                      var password: String,
-                     var instanceId: String)
+                     var tenantId: String)

@@ -1,4 +1,4 @@
-package com.tooling.instance
+package com.tooling.tenant
 
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -7,4 +7,4 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @Configuration
 @ComponentScan
 @EnableReactiveMongoRepositories
-open class InstanceConfiguration
+open class TenantConfiguration

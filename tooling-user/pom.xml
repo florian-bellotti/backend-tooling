@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.tooling</groupId>
-            <artifactId>tooling-instance</artifactId>
+            <artifactId>tooling-tenant</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

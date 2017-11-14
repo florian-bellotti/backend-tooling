@@ -12,7 +12,7 @@ open class ProjectRouter(private val projectHandler: ProjectHandler) {
   @Bean
   open fun vacationApis() = router {
     (accept(MediaType.APPLICATION_JSON) and "/").nest {
-      GET("/", { _ -> projectHandler.find() })
+      GET("/", projectHandler::find)
       POST("/", projectHandler::create)
     }
   }

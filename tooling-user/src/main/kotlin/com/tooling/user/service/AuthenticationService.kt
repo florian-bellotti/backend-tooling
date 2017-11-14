@@ -1,6 +1,6 @@
 package com.tooling.user.service
 
-import com.tooling.instance.exception.InvalidInstanceIdException
+import com.tooling.tenant.exception.InvalidTenantIdException
 import com.tooling.user.config.SecurityProperties
 import com.tooling.user.exception.DisabledUserException
 import com.tooling.user.exception.InvalidCredentialsException
@@ -22,17 +22,17 @@ open class AuthenticationService(private val userRepository: UserRepository,
                                  private val securityProperties: SecurityProperties) {
   companion object {
     val logger = LoggerFactory.getLogger(AuthenticationService::class.java)!!
-    val INSTANCE_ID = "ins"
+    val TENANT_ID = "tenant"
   }
 
   open fun authenticate(userLogin: UserLogin): Auth {
     val email = userLogin.email.toLowerCase()
-    val instanceId = userLogin.instanceId
+    val tenantId = userLogin.tenantId
 
-    if (instanceId.isEmpty())
-      throw InvalidInstanceIdException("Instance id empty in userLogin")
+    if (tenantId.isEmpty())
+      throw InvalidTenantIdException("Tenant id empty in userLogin")
 
-    val user = ofNullable(userRepository.findByEmailAndInstanceId(email, instanceId))
+    val user = ofNullable(userRepository.findByEmailAndTenantId(email, tenantId))
       .orElseThrow({ InvalidCredentialsException("Invalid login") })
 
     if (!user.active)
@@ -52,7 +52,7 @@ open class AuthenticationService(private val userRepository: UserRepository,
       .setIssuedAt(from(now()))
       .claim("grp", ofNullable<List<String>>(user.groups).orElse(emptyList()))
       .claim("loc", user.locale.toString())
-      .claim(INSTANCE_ID, instanceId)
+      .claim(TENANT_ID, tenantId)
 
     if (user.firstName != null)
       jwtBuilder = jwtBuilder.claim("fnm", user.firstName)
