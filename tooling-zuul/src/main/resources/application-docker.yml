@@ -1,9 +1,9 @@
 zuul:
   routes:
     vacations:
-      url: http://vacation
+      url: http://vacation:8081
     projects:
-      url: http://project
+      url: http://project:8082
 
 ribbon:
   eureka:

@@ -32,6 +32,7 @@ open class UserService(private val userRepository: UserRepository,
   fun insertDefaultUsers() =
     tenantService
       .findAll()
+      .switchIfEmpty { tenantService.insertDefault().subscribe(this::insertDefaultUsersByInstance) }
       .subscribe(this::insertDefaultUsersByInstance)
 
   fun insertDefaultUsersByInstance(tenant: Tenant) {

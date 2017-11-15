@@ -2,16 +2,22 @@ version: "2"
 services:
   mongo:
     image: mongo:latest
+    ports:
+      - 27017:27017
     expose:
       - "27017"
   vacation:
     image: tooling/tooling-vacation
+    expose:
+        - "8081"
     links:
       - mongo
     depends_on:
       - mongo
   project:
     image: tooling/tooling-project
+    expose:
+        - "8082"
     links:
       - mongo
     depends_on:
@@ -22,5 +28,7 @@ services:
         - 8080:8080
     links:
       - mongo
+      - vacation
+      - project
     depends_on:
       - mongo
