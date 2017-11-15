@@ -1,0 +1,236 @@
+{
+	"info": {
+		"name": "Tooling",
+		"_postman_id": "5d3aaff1-79ee-63f2-03f9-5be1b224456b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authenticate",
+			"description": "",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@tooling.ovh\",\n\t\"password\": \"password\",\n\t\"tenantId\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/users/authenticate",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"users",
+								"authenticate"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vacation",
+			"description": "",
+			"item": [
+				{
+					"name": "Find vacations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hostName}}/vacations",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"vacations"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create vacation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"companyId\": \"test\",\n    \"userId\": \"user\",\n    \"startDate\": \"2007-01-16T02:23:47.000+0000\",\n    \"endDate\": \"2009-01-16T02:23:45.000+0000\",\n    \"status\": \"WAITING\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/vacations",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"vacations"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update vacation",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"5a01d75200be254cd287044c\",\n    \"companyId\": \"test\",\n    \"userId\": \"user\",\n    \"startDate\": \"2007-01-16T02:23:47.000+0000\",\n    \"endDate\": \"2009-01-16T02:23:45.000+0000\",\n    \"status\": \"WAITING\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/vacations/5a01d75200be254cd287044c",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"vacations",
+								"5a01d75200be254cd287044c"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"description": "",
+			"item": [
+				{
+					"name": "Find project",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hostName}}/projects",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create project",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\": \"0123\",\n\t\"name\": \"Tooling development\",\n\t\"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/projects",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update project",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\": \"0123\",\n\t\"name\": \"Tooling development :)\",\n\t\"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/projects",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
