@@ -5,4 +5,4 @@ spring:
     mongodb.uri: mongodb://mongo/tooling
 
 server:
-  port: 8081
+  port: 8080
