@@ -2,6 +2,11 @@
 
 ./mvnw clean install -Dmaven.test.skip
 
+cd tooling-activity
+docker build -t tooling/tooling-activity .
+cd ..
+
+
 cd tooling-project
 docker build -t tooling/tooling-project .
 cd ..

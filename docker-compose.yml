@@ -22,6 +22,14 @@ services:
       - mongo
     depends_on:
       - mongo
+  activity:
+    image: tooling/tooling-activity
+    expose:
+        - "8080"
+    links:
+      - mongo
+    depends_on:
+      - mongo
   api:
     image: tooling/tooling-zuul
     ports:

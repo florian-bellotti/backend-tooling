@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tooling-activity
+  data:
+    mongodb.uri: mongodb://localhost:27017/tooling
+
+server:
+  port: 8083

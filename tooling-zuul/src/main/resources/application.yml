@@ -4,6 +4,8 @@ zuul:
       url: http://localhost:8081
     projects:
       url: http://localhost:8082
+    activities:
+      url: http://localhost:8083
 
 ribbon:
   eureka:

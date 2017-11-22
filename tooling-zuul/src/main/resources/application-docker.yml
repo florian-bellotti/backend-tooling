@@ -4,6 +4,8 @@ zuul:
       url: http://vacation:8080
     projects:
       url: http://project:8080
+    activities:
+      url: http://activity:8080
 
 ribbon:
   eureka:
