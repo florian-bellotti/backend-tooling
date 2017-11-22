@@ -1,14 +1,14 @@
 package com.tooling.project.handler
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.tooling.core.exception.InvalidUserGroupException
 import com.tooling.project.exception.InvalidProjectException
 import com.tooling.project.model.ErrorResponse
 import com.tooling.tenant.exception.InvalidTenantIdException
 import org.slf4j.LoggerFactory
 import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.codec.HttpMessageWriter
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.HandlerStrategies
@@ -36,18 +36,15 @@ class ErrorHandler: WebExceptionHandler {
 
   fun handle(throwable: Throwable): Mono<ServerResponse> {
     return when (throwable) {
-      is InvalidTenantIdException -> {
+      InvalidTenantIdException::class, InvalidProjectException::class, DecodingException::class -> {
         handleError(BAD_REQUEST, throwable)
       }
-      is InvalidProjectException -> {
-        handleError(BAD_REQUEST, throwable)
-      }
-      is DecodingException -> {
-        handleError(BAD_REQUEST, throwable)
+      InvalidUserGroupException::class -> {
+        handleError(FORBIDDEN, throwable)
       }
       else -> {
         logger.error(INTERNAL_SERVER_ERROR.toString(), throwable)
-        createResponse(INTERNAL_SERVER_ERROR, "Unhandled exception")
+        createResponse(INTERNAL_SERVER_ERROR, throwable.message)
       }
     }
   }

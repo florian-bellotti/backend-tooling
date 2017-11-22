@@ -15,6 +15,7 @@ open class ProjectRouter(private val projectHandler: ProjectHandler) {
       GET("/", projectHandler::find)
       POST("/", projectHandler::create)
       PUT("/", projectHandler::update)
+      DELETE("/{code}", projectHandler::delete)
     }
   }
 }

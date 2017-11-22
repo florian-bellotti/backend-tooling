@@ -14,12 +14,19 @@
     <name>Tooling project</name>
 
     <dependencies>
+        <!-- Tooling -->
+        <dependency>
+            <groupId>com.tooling</groupId>
+            <artifactId>tooling-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.tooling</groupId>
             <artifactId>tooling-tenant</artifactId>
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>

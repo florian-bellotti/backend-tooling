@@ -9,12 +9,14 @@ class SimpleFilter: ZuulFilter() {
   companion object {
     val logger = LoggerFactory.getLogger(SimpleFilter::class.java)
     val TENANT_ID = "tenantId"
+    val GROUPS = "grp"
   }
 
   override fun run(): Any? {
     val ctx = RequestContext.getCurrentContext()
     val request = ctx.getRequest()
     ctx.addZuulRequestHeader(TENANT_ID, request.getHeader(TENANT_ID))
+    ctx.addZuulRequestHeader(GROUPS, request.getHeader(GROUPS))
     logger.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()))
     return null
   }

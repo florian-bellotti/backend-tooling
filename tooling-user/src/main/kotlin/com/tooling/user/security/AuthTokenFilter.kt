@@ -37,10 +37,11 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
 
     try {
       if (StringUtils.hasText(authToken)) {
-        val userTenant = buildUserFromToken(authToken)
-        SecurityContextHolder.getContext().authentication = KeybuildAuthentication(userTenant.user)
+        val user = buildUserFromToken(authToken)
+        SecurityContextHolder.getContext().authentication = KeybuildAuthentication(user)
 
-        mutableRequest.putHeader("tenantId", userTenant.tenantId)
+        mutableRequest.putHeader("tenantId", user.tenantId)
+        mutableRequest.putHeader("grp", user.groups.toString())
       } else {
         SecurityContextHolder.getContext().authentication = null
       }
@@ -56,23 +57,18 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
   }
 
   @Suppress("UNCHECKED_CAST")
-  private fun buildUserFromToken(authToken: String): UserTenant {
+  private fun buildUserFromToken(authToken: String): User {
     try {
       val claims = jwtParser.parseClaimsJws(authToken).body
       val grpClaims = claims["grp"]
       val groups = if (grpClaims == null) mutableListOf() else grpClaims as MutableList<String>
       val tenantId = claims[AuthenticationService.TENANT_ID] as String?
-      if (!StringUtils.hasText(tenantId)) {
+      if (!StringUtils.hasText(tenantId))
         throw InvalidTenantIdException("Tenant id is null or empty in JWT.")
-      }
-      val user = User(email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
 
-      return UserTenant(user, tenantId)
+      return User(email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
     } catch (e: JwtException) {
       throw InvalidTokenException(e.message)
     }
   }
 }
-
-internal data class UserTenant(val user: User,
-                               val tenantId: String)

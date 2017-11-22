@@ -1,5 +1,6 @@
 package com.tooling.project.repository
 
+import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
 import com.tooling.project.model.Project
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
@@ -17,5 +18,12 @@ class ProjectRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemp
     update.set("name", project.name)
     update.set("status", project.status)
     return reactiveMongoTemplate.updateFirst(query, update, Project::class.java)
+  }
+
+  override fun deleteByCodeAndTenantId(code: Mono<String>, tenantId: Mono<String>): Mono<DeleteResult> {
+    val query = Query(Criteria
+      .where("code").`is`(code.block())
+      .and("tenantId").`is`(tenantId.block()))
+    return reactiveMongoTemplate.remove(query, Project::class.java)
   }
 }

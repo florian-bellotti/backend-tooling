@@ -1,48 +1,70 @@
 package com.tooling.project.service
 
-import com.mongodb.client.result.UpdateResult
-import com.tooling.project.exception.InvalidProjectException
+import com.tooling.core.exception.InvalidUserGroupException
 import com.tooling.project.model.Project
 import com.tooling.project.model.ProjectDto
 import com.tooling.project.repository.ProjectRepository
 import com.tooling.tenant.exception.InvalidTenantIdException
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Component
 class ProjectService(private val projectRepository: ProjectRepository) {
 
-  fun getTenantIdFromHeader(req: ServerRequest): String {
-    val tenantIds = req.headers().header("tenantId")
-    if (tenantIds.isEmpty() || tenantIds.get(0) == null)
-      throw InvalidTenantIdException("Tenant id is null")
-
-    if (tenantIds.size > 1)
-      throw InvalidTenantIdException("Multiple tenant id found")
-
-    return tenantIds.get(0)!!
+  companion object {
+    val ADMIN_GROUP = Flux.just("ADMIN", "USER_ADMIN")
   }
 
-  fun insert(projectDto: ProjectDto?, request: ServerRequest): Mono<Project> {
-    checkProjectDto(projectDto)
-    val project = mapProjectDtoToProject(projectDto!!, request)
-    return projectRepository.insert(project)
-  }
+  fun getTenantIdFromHeader(req: ServerRequest) =
+    Mono
+      .just(req.headers().header("tenantId"))
+      .map { tenantIds ->
+        if (tenantIds.isEmpty() || tenantIds.get(0) == null || tenantIds.get(0).isEmpty())
+          throw InvalidTenantIdException("Tenant id is null")
 
-  fun update(projectDto: ProjectDto?, request: ServerRequest): Mono<UpdateResult> {
-    checkProjectDto(projectDto)
-    val project = mapProjectDtoToProject(projectDto!!, request)
-    return projectRepository.update(project)
-  }
+        if (tenantIds.size > 1)
+          throw InvalidTenantIdException("Multiple tenant id found")
 
-  private fun checkProjectDto(projectDto: ProjectDto?) {
-    if (projectDto == null)
-      throw InvalidProjectException("Project is null")
-  }
+        tenantIds.get(0)
+      }
 
-  private fun mapProjectDtoToProject(projectDto: ProjectDto, request: ServerRequest): Project {
-    val tenantId = getTenantIdFromHeader(request)
-    return Project(projectDto.code, projectDto.name, projectDto.status, tenantId)
-  }
+  fun insert(projectDto: ProjectDto, request: ServerRequest, groups: Flux<String>) =
+    oneRuleMatch(groups, ADMIN_GROUP)
+      .then(
+        mapProjectDtoToProject(projectDto, request)
+          .flatMap(projectRepository::insert)
+      )
+
+  fun update(projectDto: ProjectDto, request: ServerRequest, groups: Flux<String>) =
+    oneRuleMatch(groups, ADMIN_GROUP)
+      .then(
+        mapProjectDtoToProject(projectDto, request)
+          .flatMap(projectRepository::update)
+      )
+
+  fun delete(tenantId: Mono<String>, code: Mono<String>, groups: Flux<String>) =
+    oneRuleMatch(groups, ADMIN_GROUP)
+      .then(projectRepository.deleteByCodeAndTenantId(code, tenantId))
+
+  private fun mapProjectDtoToProject(projectDto: ProjectDto, request: ServerRequest) =
+    getTenantIdFromHeader(request)
+      .map { tenantId -> Project(projectDto.code, projectDto.name, projectDto.status, tenantId) }
+
+  private fun oneRuleMatch(groups: Flux<String>, rules: Flux<String>) =
+    rules
+      .flatMap { rule ->
+        extractGroups(groups)
+          .flatMap { grp -> Flux.fromIterable(grp) }
+          .filter(rule::equals)
+      }
+      .switchIfEmpty {
+        throw InvalidUserGroupException("User is not authorized to go here.")
+      }
+
+  private fun extractGroups(groups: Flux<String>) =
+    groups
+      .map { stringList -> stringList.replace(Regex("\\[|\\]| "), "") }
+      .map { stringList -> stringList.split(",") }
 }

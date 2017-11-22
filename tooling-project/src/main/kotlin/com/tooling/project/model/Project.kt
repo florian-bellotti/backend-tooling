@@ -8,11 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
 @CompoundIndexes(
-  CompoundIndex(name = "project_code_tenantId_idx", def = "{ 'code': 1, 'tenantId': 1 }", background = true)
+  CompoundIndex(name = "project_code_tenantId_idx", def = "{ 'code': 1, 'tenantId': 1 }", background = true, unique = true)
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class Project(@Id
-                   var code: String,
+data class Project(var code: String,
                    var name: String,
                    var status: ProjectStatus,
                    var tenantId: String)

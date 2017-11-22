@@ -10,7 +10,7 @@ ribbon:
     enabled: false
 
 server:
-  port: 8085
+  port: 8080
 
 tooling:
   security:
