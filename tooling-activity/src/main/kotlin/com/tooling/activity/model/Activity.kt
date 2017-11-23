@@ -14,6 +14,7 @@ import java.time.Instant
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Activity(@Id
                     var id: String? = null,
+                    var userId: String,
                     var code: String,
                     var startDate: Instant,
                     var endDate: Instant,

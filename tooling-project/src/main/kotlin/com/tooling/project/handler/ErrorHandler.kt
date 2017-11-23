@@ -1,10 +1,9 @@
 package com.tooling.project.handler
 
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.tooling.core.exception.InvalidUserGroupException
 import com.tooling.project.exception.InvalidProjectException
 import com.tooling.project.model.ErrorResponse
-import com.tooling.tenant.exception.InvalidTenantIdException
+import com.tooling.core.exception.InvalidTenantIdException
 import org.slf4j.LoggerFactory
 import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus

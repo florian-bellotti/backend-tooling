@@ -2,8 +2,11 @@ package com.tooling.activity
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 
-@SpringBootConfiguration
+@SpringBootApplication
+@EnableReactiveMongoRepositories
 open class ActivityApplication
 
 fun main(args: Array<String>) {

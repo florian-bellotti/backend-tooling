@@ -1,11 +1,11 @@
-package com.tooling.project.handler
+package com.tooling.activity.handler
 
 import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
+import com.tooling.activity.model.ActivityDto
+import com.tooling.activity.repository.ActivityRepository
+import com.tooling.activity.service.ActivityService
 import com.tooling.core.service.HeaderReader
-import com.tooling.project.model.ProjectDto
-import com.tooling.project.repository.ProjectRepository
-import com.tooling.project.service.ProjectService
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -13,35 +13,35 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Component
-class ProjectHandler(private val projectService: ProjectService,
-                     private val projectRepository: ProjectRepository) {
+class ActivityHandler(private val activityService: ActivityService,
+                      private val activityRepository: ActivityRepository) {
 
-  fun find(request: ServerRequest): Mono<ServerResponse> =
+  fun find(request: ServerRequest) =
     Mono
       .just(request)
       .flatMap(HeaderReader.Companion::getTenantId)
       .transform { tenantId ->
         ServerResponse.ok().body(
-          projectRepository
+          activityRepository
             .findByTenantId(tenantId)
-            .map { project -> ProjectDto(project) }, ProjectDto::class.java)
+            .map { activity -> ActivityDto(activity) }, ActivityDto::class.java)
       }
 
   fun create(request: ServerRequest): Mono<ServerResponse> =
     request
-      .bodyToMono(ProjectDto::class.java)
-      .flatMap { project ->
-        projectService.insert(project, request, Flux.fromIterable(request.headers().header("grp")))
+      .bodyToMono(ActivityDto::class.java)
+      .flatMap { activity ->
+        activityService.insert(activity, request, Flux.fromIterable(request.headers().header("grp")))
       }
-      .transform { createdProject ->
-        ServerResponse.ok().body(createdProject
-          .map { project -> ProjectDto(project) }, ProjectDto::class.java) }
+      .transform { createdActivity ->
+        ServerResponse.ok().body(createdActivity
+          .map { activity -> ActivityDto(activity) }, ActivityDto::class.java) }
 
   fun update(request: ServerRequest): Mono<ServerResponse> =
     request
-      .bodyToMono(ProjectDto::class.java)
+      .bodyToMono(ActivityDto::class.java)
       .flatMap { project ->
-        projectService.update(project, request, Flux.fromIterable(request.headers().header("grp")))
+        activityService.update(project, request, Flux.fromIterable(request.headers().header("grp")))
       }
       .transform { result -> ServerResponse.ok().body(result, UpdateResult::class.java) }
 
@@ -49,9 +49,9 @@ class ProjectHandler(private val projectService: ProjectService,
     Mono
       .just(request)
       .flatMap { req ->
-        projectService.delete(
+        activityService.delete(
           HeaderReader.getTenantId(req),
-          Mono.just(req.pathVariable("code")),
+          Mono.just(req.pathVariable("id")),
           Flux.fromIterable(req.headers().header("grp"))
         )
       }

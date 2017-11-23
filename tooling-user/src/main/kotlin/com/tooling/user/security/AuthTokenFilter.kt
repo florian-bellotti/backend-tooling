@@ -1,7 +1,7 @@
 package com.tooling.user.security
 
 import com.tooling.core.http.RemoteIPResolver
-import com.tooling.tenant.exception.InvalidTenantIdException
+import com.tooling.core.exception.InvalidTenantIdException
 import com.tooling.user.exception.InvalidTokenException
 import com.tooling.user.model.MutableHttpServletRequest
 import com.tooling.user.model.User

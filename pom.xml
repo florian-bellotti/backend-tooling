@@ -12,6 +12,7 @@
 
     <modules>
         <module>tooling-core</module>
+        <module>tooling-activity</module>
         <module>tooling-tenant</module>
         <module>tooling-user</module>
         <module>tooling-vacation</module>

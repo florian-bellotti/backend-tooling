@@ -1,6 +1,6 @@
 package com.tooling.user.service
 
-import com.tooling.tenant.exception.InvalidTenantIdException
+import com.tooling.core.exception.InvalidTenantIdException
 import com.tooling.user.config.SecurityProperties
 import com.tooling.user.exception.DisabledUserException
 import com.tooling.user.exception.InvalidCredentialsException

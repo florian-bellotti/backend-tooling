@@ -1,3 +1,3 @@
-package com.tooling.tenant.exception
+package com.tooling.core.exception
 
 class InvalidTenantIdException(message: String): RuntimeException(message)

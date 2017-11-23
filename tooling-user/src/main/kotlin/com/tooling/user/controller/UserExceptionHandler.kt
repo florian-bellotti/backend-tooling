@@ -1,6 +1,6 @@
 package com.tooling.user.controller
 
-import com.tooling.tenant.exception.InvalidTenantIdException
+import com.tooling.core.exception.InvalidTenantIdException
 import com.tooling.user.exception.DisabledUserException
 import com.tooling.user.exception.InvalidCredentialsException
 import com.tooling.user.model.ErrorMessage
