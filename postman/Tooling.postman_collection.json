@@ -169,6 +169,37 @@
 					"response": []
 				},
 				{
+					"name": "Advanced research",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hostName}}/projects?code=0123",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "0123",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "Create project",
 					"request": {
 						"method": "POST",
@@ -184,7 +215,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"code\": \"0123\",\n\t\"name\": \"Tooling development\",\n\t\"status\": \"ACTIVE\"\n}"
+							"raw": "{\n\t\"code\": \"01235\",\n\t\"name\": \"Tooling development\",\n\t\"status\": \"ACTIVE\"\n}"
 						},
 						"url": {
 							"raw": "{{hostName}}/projects",
@@ -215,7 +246,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"code\": \"0123\",\n\t\"name\": \"Tooling development :)\",\n\t\"status\": \"ACTIVE\"\n}"
+							"raw": "{\n\t\"code\": \"01235\",\n\t\"name\": \"Tooling developmente :)\",\n\t\"status\": \"ACTIVE\"\n}"
 						},
 						"url": {
 							"raw": "{{hostName}}/projects",
@@ -224,6 +255,185 @@
 							],
 							"path": [
 								"projects"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete project",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{hostName}}/projects/01235",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"projects",
+								"01235"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Activity",
+			"description": "",
+			"item": [
+				{
+					"name": "Find activity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hostName}}/activities",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"activities"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Advanced research",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hostName}}/activities?userId=5a1581fe813364481d3a08d6",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"activities"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5a1581fe813364481d3a08d6",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create activity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\": \"01235\",\n\t\"userId\": \"5a1581fe813364481d3a08d6\",\n\t\"startDate\": \"2007-01-16T02:23:47.000+0000\",\n    \"endDate\": \"2009-01-16T02:23:45.000+0000\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/activities",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"activities"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update activity",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"5a16a6588133645e58a78d52\",\n    \"userId\": \"5a1581fe813364481d3a08d6\",\n    \"code\": \"01235\",\n    \"startDate\": 1168914227,\n    \"endDate\": 1232072625,\n    \"comment\": \"EUUUUH\"\n}"
+						},
+						"url": {
+							"raw": "{{hostName}}/activities",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"activities"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete activity",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{hostName}}/activities/5a16a6788133645e60e8b21c",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"activities",
+								"5a16a6788133645e60e8b21c"
 							]
 						},
 						"description": ""
