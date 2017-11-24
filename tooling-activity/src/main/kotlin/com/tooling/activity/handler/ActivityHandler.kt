@@ -23,7 +23,7 @@ class ActivityHandler(private val activityService: ActivityService,
       .transform { tenantId ->
         ServerResponse.ok().body(
           activityRepository
-            .findByTenantId(tenantId)
+            .find(tenantId, request.queryParams())
             .map { activity -> ActivityDto(activity) }, ActivityDto::class.java)
       }
 

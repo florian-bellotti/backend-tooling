@@ -7,9 +7,22 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
+import org.springframework.util.MultiValueMap
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemplate): ActivityRepositoryCustom {
+
+  override fun find(tenantId: Mono<String>, queryFields: MultiValueMap<String, String>): Flux<Activity> {
+    val query = Query(Criteria.where("tenantId").`is`(tenantId.block()))
+
+    for (queryField in queryFields.entries) {
+      query.addCriteria(Criteria.where(queryField.key).`in`(queryField.value))
+    }
+
+    return reactiveMongoTemplate.find(query, Activity::class.java)
+  }
+
   override fun update(activity: Activity): Mono<UpdateResult> {
     val query = Query(Criteria
       .where("id").`is`(activity.id)

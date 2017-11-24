@@ -23,7 +23,7 @@ class ProjectHandler(private val projectService: ProjectService,
       .transform { tenantId ->
         ServerResponse.ok().body(
           projectRepository
-            .findByTenantId(tenantId)
+            .find(tenantId, request.queryParams())
             .map { project -> ProjectDto(project) }, ProjectDto::class.java)
       }
 
