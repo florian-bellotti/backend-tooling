@@ -23,7 +23,7 @@ open class CustomWebSecurityConfigurerAdapter(val xAuthTokenFilter: AuthTokenFil
       .addHeaderWriter(XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
       .addHeaderWriter(StaticHeadersWriter("Access-Control-Allow-Origin", "*"))
       .addHeaderWriter(StaticHeadersWriter("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"))
-      .addHeaderWriter(StaticHeadersWriter("Access-Control-Allow-Headers", "Content-Type, Accept, X-Auth-Token"))
+      .addHeaderWriter(StaticHeadersWriter("Access-Control-Allow-Headers", "Content-Type, Accept, X-Auth-Token, Authorization"))
       .addHeaderWriter(StaticHeadersWriter("Access-Control-Max-Age", "1800"))
 
     http.logout().disable()

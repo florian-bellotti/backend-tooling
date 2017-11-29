@@ -29,6 +29,8 @@ class UserRepositoryImpl(private val mongoTemplate: MongoTemplate): UserReposito
     update.set("firstName", user.firstName)
     update.set("lastName", user.lastName)
     update.set("groups", user.groups)
+    update.set("address", user.address)
+    update.set("phone", user.phone)
     update.set("active", user.active)
     update.set("locale", user.locale)
     return mongoTemplate.updateFirst(query, update, User::class.java)
