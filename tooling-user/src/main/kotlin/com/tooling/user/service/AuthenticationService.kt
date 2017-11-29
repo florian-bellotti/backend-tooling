@@ -54,6 +54,7 @@ open class AuthenticationService(private val userRepository: UserRepository,
       .claim("loc", user.locale.toString())
       .claim(TENANT_ID, tenantId)
 
+    jwtBuilder = jwtBuilder.claim("usr", user.id)
     jwtBuilder = jwtBuilder.claim("mail", user.email)
     if (user.firstName != null)
       jwtBuilder = jwtBuilder.claim("fnm", user.firstName)
