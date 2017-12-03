@@ -1,5 +1,15 @@
 version: "2"
 services:
+  api:
+    image: tooling/tooling-zuul
+    ports:
+      - 8080:8080
+    links:
+      - mongo
+      - vacation
+      - project
+    depends_on:
+      - mongo
   mongo:
     image: mongo:latest
     ports:
@@ -28,15 +38,5 @@ services:
         - "8080"
     links:
       - mongo
-    depends_on:
-      - mongo
-  api:
-    image: tooling/tooling-zuul
-    ports:
-        - 8080:8080
-    links:
-      - mongo
-      - vacation
-      - project
     depends_on:
       - mongo

@@ -51,7 +51,7 @@ class ProjectHandler(private val projectService: ProjectService,
       .flatMap { req ->
         projectService.delete(
           HeaderReader.getTenantId(req),
-          Mono.just(req.pathVariable("code")),
+          Mono.just(req.pathVariable("id")),
           Flux.fromIterable(req.headers().header("grp"))
         )
       }

@@ -35,6 +35,8 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
     val authToken = httpServletRequest.getHeader(TOKEN_HEADER_NAME)?.replace("Bearer ", "") ?: ""
     val mutableRequest = MutableHttpServletRequest(httpServletRequest)
 
+    val e = httpServletRequest.headerNames;
+
     try {
       if (StringUtils.hasText(authToken)) {
         val user = buildUserFromToken(authToken)

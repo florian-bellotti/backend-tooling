@@ -25,17 +25,20 @@ class ProjectRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemp
 
   override fun update(project: Project): Mono<UpdateResult> {
     val query = Query(Criteria
-      .where("code").`is`(project.code)
+      .where("id").`is`(project.id)
       .and("tenantId").`is`(project.tenantId))
     val update = Update()
     update.set("name", project.name)
+    update.set("code", project.code)
+    update.set("description", project.description)
+    update.set("color", project.color)
     update.set("status", project.status)
     return reactiveMongoTemplate.updateFirst(query, update, Project::class.java)
   }
 
-  override fun deleteByCodeAndTenantId(code: Mono<String>, tenantId: Mono<String>): Mono<DeleteResult> {
+  override fun deleteByCodeAndTenantId(id: Mono<String>, tenantId: Mono<String>): Mono<DeleteResult> {
     val query = Query(Criteria
-      .where("code").`is`(code.block())
+      .where("id").`is`(id.block())
       .and("tenantId").`is`(tenantId.block()))
     return reactiveMongoTemplate.remove(query, Project::class.java)
   }

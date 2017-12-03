@@ -10,5 +10,5 @@ import reactor.core.publisher.Mono
 interface ProjectRepositoryCustom {
   fun find(tenantId: Mono<String>, queryFields: MultiValueMap<String, String>): Flux<Project>
   fun update(project: Project): Mono<UpdateResult>
-  fun deleteByCodeAndTenantId(code: Mono<String>, tenantId: Mono<String>): Mono<DeleteResult>
+  fun deleteByCodeAndTenantId(id: Mono<String>, tenantId: Mono<String>): Mono<DeleteResult>
 }

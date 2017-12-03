@@ -31,11 +31,14 @@ class ProjectService(private val projectRepository: ProjectRepository) {
           .flatMap(projectRepository::update)
       )
 
-  fun delete(tenantId: Mono<String>, code: Mono<String>, groups: Flux<String>) =
+  fun delete(tenantId: Mono<String>, id: Mono<String>, groups: Flux<String>) =
     HeaderReader.oneRuleMatch(groups, ADMIN_GROUP)
-      .then(projectRepository.deleteByCodeAndTenantId(code, tenantId))
+      .then(projectRepository.deleteByCodeAndTenantId(id, tenantId))
 
   private fun mapProjectDtoToProject(projectDto: ProjectDto, request: ServerRequest) =
     HeaderReader.getTenantId(request)
-      .map { tenantId -> Project(projectDto.code, projectDto.name, projectDto.status, tenantId) }
+      .map { tenantId ->
+        Project(projectDto.id,projectDto.code, projectDto.name, projectDto.description,
+          projectDto.color, projectDto.status, tenantId)
+      }
 }
