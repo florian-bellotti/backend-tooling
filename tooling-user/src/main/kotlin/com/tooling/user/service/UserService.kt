@@ -5,6 +5,7 @@ import com.mongodb.client.result.UpdateResult
 import com.tooling.core.exception.InvalidUserGroupException
 import com.tooling.tenant.model.Tenant
 import com.tooling.tenant.service.TenantService
+import com.tooling.user.exception.InvalidUserException
 import com.tooling.user.jackson.YamlObjectMapper
 import com.tooling.user.model.TmpUser
 import com.tooling.user.model.User
@@ -67,8 +68,14 @@ open class UserService(private val userRepository: UserRepository,
       user.address, user.phone, user.active, user.locale, user.activationDate, user.creationDate, tenantId))
   }
 
-  fun update(user: UserDto, tenantId: String, groups: String): UpdateResult {
-    oneRuleMatch(groups, ADMIN_GROUP)
+  fun update(user: UserDto, userId: String, tenantId: String, groups: String): UpdateResult {
+    if (user.id == null)
+      throw InvalidUserException("User id is null")
+
+    if ("".equals(userId) || !userId.equals(user.id)) {
+      oneRuleMatch(groups, ADMIN_GROUP)
+    }
+
     return userRepository.update(tenantId, user)
   }
 

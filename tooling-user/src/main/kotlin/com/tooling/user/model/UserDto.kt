@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class UserDto(var id: String,
+data class UserDto(var id: String? = null,
                    var email: String,
                    var firstName: String? = null,
                    var lastName: String? = null,

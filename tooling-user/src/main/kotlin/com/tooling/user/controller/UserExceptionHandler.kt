@@ -3,6 +3,7 @@ package com.tooling.user.controller
 import com.tooling.core.exception.InvalidTenantIdException
 import com.tooling.user.exception.DisabledUserException
 import com.tooling.user.exception.InvalidCredentialsException
+import com.tooling.user.exception.InvalidUserException
 import com.tooling.user.model.ErrorMessage
 import io.jsonwebtoken.JwtException
 import org.springframework.http.HttpStatus.*
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @ControllerAdvice
 open class UserExceptionHandler {
   @ResponseStatus(BAD_REQUEST)
-  @ExceptionHandler(InvalidTenantIdException::class)
+  @ExceptionHandler(InvalidTenantIdException::class, InvalidUserException::class)
   fun handleInvalidInstanceIdException() = ErrorMessage("BAD_REQUEST", "Tenant id is invalid")
 
   @ResponseStatus(UNAUTHORIZED)

@@ -42,6 +42,7 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
         val user = buildUserFromToken(authToken)
         SecurityContextHolder.getContext().authentication = KeybuildAuthentication(user)
 
+        mutableRequest.putHeader("userId", user.id!!)
         mutableRequest.putHeader("tenantId", user.tenantId)
         mutableRequest.putHeader("grp", user.groups.toString())
       } else {
@@ -68,7 +69,11 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
       if (!StringUtils.hasText(tenantId))
         throw InvalidTenantIdException("Tenant id is null or empty in JWT.")
 
-      return User(email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
+      val userId = claims["usr"] as String?
+      if (!StringUtils.hasText(userId))
+        throw InvalidTokenException("User id in token is null.")
+
+      return User(id = userId, email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
     } catch (e: JwtException) {
       throw InvalidTokenException(e.message)
     }

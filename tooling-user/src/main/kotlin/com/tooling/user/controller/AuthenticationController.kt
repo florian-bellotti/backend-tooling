@@ -24,7 +24,7 @@ class AuthenticationController(private val authenticationService: Authentication
 
   @PutMapping
   fun update(@RequestBody user: UserDto, request: HttpServletRequest) =
-    userService.update(user, request.getHeader("tenantId"), request.getHeader("grp"))
+    userService.update(user, request.getHeader("userId"), request.getHeader("tenantId"), request.getHeader("grp"))
 
   @DeleteMapping("/{id}")
   fun delete(@PathVariable id: String, request: HttpServletRequest) =
