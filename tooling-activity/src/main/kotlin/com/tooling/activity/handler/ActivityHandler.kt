@@ -31,7 +31,12 @@ class ActivityHandler(private val activityService: ActivityService,
     request
       .bodyToMono(ActivityDto::class.java)
       .flatMap { activity ->
-        activityService.insert(activity, request, Flux.fromIterable(request.headers().header("grp")))
+        activityService.insert(
+          activity,
+          request,
+          Mono.just(request.headers().header("userId")),
+          Flux.fromIterable(request.headers().header("grp"))
+        )
       }
       .transform { createdActivity ->
         ServerResponse.ok().body(createdActivity
@@ -41,7 +46,11 @@ class ActivityHandler(private val activityService: ActivityService,
     request
       .bodyToMono(ActivityDto::class.java)
       .flatMap { project ->
-        activityService.update(project, request, Flux.fromIterable(request.headers().header("grp")))
+        activityService.update(
+          project,
+          request,
+          Mono.just(request.headers().header("userId")),
+          Flux.fromIterable(request.headers().header("grp")))
       }
       .transform { result -> ServerResponse.ok().body(result, UpdateResult::class.java) }
 
@@ -52,6 +61,7 @@ class ActivityHandler(private val activityService: ActivityService,
         activityService.delete(
           HeaderReader.getTenantId(req),
           Mono.just(req.pathVariable("id")),
+          Mono.just(request.headers().header("userId")),
           Flux.fromIterable(req.headers().header("grp"))
         )
       }
