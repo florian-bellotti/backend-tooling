@@ -32,4 +32,7 @@ class AuthenticationController(private val authenticationService: Authentication
 
   @PostMapping("/authenticate")
   fun authenticate(@RequestBody userLogin: UserLogin) = authenticationService.authenticate(userLogin)
+
+  @GetMapping("/refresh")
+  fun refresh(@RequestHeader("Authorization") authToken: String) = authenticationService.refresh(authToken)
 }

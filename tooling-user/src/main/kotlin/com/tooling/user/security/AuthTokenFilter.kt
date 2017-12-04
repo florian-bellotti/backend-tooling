@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 @ConditionalOnClass(RestController::class)
-class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
+class AuthTokenFilter(private val tokenUtils: TokenUtils) : GenericFilterBean() {
   companion object {
     val logger = LoggerFactory.getLogger(AuthTokenFilter::class.java)!!
     val TOKEN_HEADER_NAME = "Authorization"
@@ -39,7 +39,7 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
 
     try {
       if (StringUtils.hasText(authToken)) {
-        val user = buildUserFromToken(authToken)
+        val user = tokenUtils.buildUserFromToken(authToken)
         SecurityContextHolder.getContext().authentication = KeybuildAuthentication(user)
 
         mutableRequest.putHeader("userId", user.id!!)
@@ -56,26 +56,6 @@ class AuthTokenFilter(private val jwtParser: JwtParser) : GenericFilterBean() {
       SecurityContextHolder.getContext().authentication = null
       val response = servletResponse as HttpServletResponse
       response.status = HttpStatus.FORBIDDEN.value()
-    }
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  private fun buildUserFromToken(authToken: String): User {
-    try {
-      val claims = jwtParser.parseClaimsJws(authToken).body
-      val grpClaims = claims["grp"]
-      val groups = if (grpClaims == null) mutableListOf() else grpClaims as MutableList<String>
-      val tenantId = claims[AuthenticationService.TENANT_ID] as String?
-      if (!StringUtils.hasText(tenantId))
-        throw InvalidTenantIdException("Tenant id is null or empty in JWT.")
-
-      val userId = claims["usr"] as String?
-      if (!StringUtils.hasText(userId))
-        throw InvalidTokenException("User id in token is null.")
-
-      return User(id = userId, email = claims.subject, password = "", groups = groups, tenantId = tenantId!!)
-    } catch (e: JwtException) {
-      throw InvalidTokenException(e.message)
     }
   }
 }

@@ -8,6 +8,8 @@ import com.tooling.user.model.Auth
 import com.tooling.user.model.User
 import com.tooling.user.model.UserLogin
 import com.tooling.user.respository.UserRepository
+import com.tooling.user.security.AuthTokenFilter
+import com.tooling.user.security.TokenUtils
 import io.jsonwebtoken.JwtBuilder
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.bcrypt.BCrypt.checkpw
@@ -18,8 +20,8 @@ import java.util.Optional.ofNullable
 
 @Service
 open class AuthenticationService(private val userRepository: UserRepository,
-                                 private val jwtBuilder: JwtBuilder,
-                                 private val securityProperties: SecurityProperties) {
+                                 private val securityProperties: SecurityProperties,
+                                 private val tokenUtils: TokenUtils) {
   companion object {
     val logger = LoggerFactory.getLogger(AuthenticationService::class.java)!!
     val TENANT_ID = "tenant"
@@ -44,23 +46,22 @@ open class AuthenticationService(private val userRepository: UserRepository,
     }
 
     val expirationDate = now().plus(securityProperties.tokenExpiration)
+    val jwtBuilder = tokenUtils.buildTokenFromUser(user, expirationDate, tenantId)
+    return Auth(user, jwtBuilder.compact())
+  }
 
-    var jwtBuilder = this.jwtBuilder
-      .setSubject(userLogin.email)
-      .setId(userLogin.email)
-      .setExpiration(from(expirationDate))
-      .setIssuedAt(from(now()))
-      .claim("grp", ofNullable<List<String>>(user.groups).orElse(emptyList()))
-      .claim("loc", user.locale.toString())
-      .claim(TENANT_ID, tenantId)
+  open fun refresh(authToken: String): Auth {
+    val token = authToken.replace("Bearer ", "") ?: ""
+    val tokenUser = tokenUtils.buildUserFromToken(token)
 
-    jwtBuilder = jwtBuilder.claim("usr", user.id)
-    jwtBuilder = jwtBuilder.claim("mail", user.email)
-    if (user.firstName != null)
-      jwtBuilder = jwtBuilder.claim("fnm", user.firstName)
-    if (user.lastName != null)
-      jwtBuilder = jwtBuilder.claim("lnm", user.lastName)
+    val user = ofNullable(userRepository.findByIdAndTenantId(tokenUser.id!!, tokenUser.tenantId))
+      .orElseThrow({ InvalidCredentialsException("Invalid login") })
 
+    if (!user.active)
+      throw DisabledUserException("User ${user.email} is disabled")
+
+    val expirationDate = now().plus(securityProperties.tokenExpiration)
+    val jwtBuilder = tokenUtils.buildTokenFromUser(user, expirationDate, user.tenantId)
     return Auth(user, jwtBuilder.compact())
   }
 
