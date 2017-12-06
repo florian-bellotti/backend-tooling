@@ -10,6 +10,9 @@ import org.springframework.data.mongodb.core.query.Update
 import org.springframework.util.MultiValueMap
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Instant
+import java.time.temporal.TemporalAccessor
+import java.util.*
 
 class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemplate): ActivityRepositoryCustom {
 
@@ -17,7 +20,19 @@ class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTem
     val query = Query(Criteria.where("tenantId").`is`(tenantId.block()))
 
     for (queryField in queryFields.entries) {
-      query.addCriteria(Criteria.where(queryField.key).`in`(queryField.value))
+      if ("start".equals(queryField.key)) {
+        if (queryField.value.size == 1) {
+          val start = Instant.ofEpochSecond(queryField.value[0].toLong())
+          query.addCriteria(Criteria.where("startDate").gte(start))
+        }
+      } else if ("end".equals(queryField.key)) {
+        if (queryField.value.size == 1) {
+          val end = Instant.ofEpochSecond(queryField.value[0].toLong())
+          query.addCriteria(Criteria.where("endDate").lte(end))
+        }
+      } else {
+        query.addCriteria(Criteria.where(queryField.key).`in`(queryField.value))
+      }
     }
 
     return reactiveMongoTemplate.find(query, Activity::class.java)

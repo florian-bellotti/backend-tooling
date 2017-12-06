@@ -14,6 +14,7 @@ import io.jsonwebtoken.JwtBuilder
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.bcrypt.BCrypt.checkpw
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.Instant.now
 import java.util.Date.from
 import java.util.Optional.ofNullable
@@ -45,7 +46,7 @@ open class AuthenticationService(private val userRepository: UserRepository,
       throw InvalidCredentialsException("Invalid login")
     }
 
-    val expirationDate = now().plus(securityProperties.tokenExpiration)
+    val expirationDate = now().plus(Duration.parse("PT48H"))
     val jwtBuilder = tokenUtils.buildTokenFromUser(user, expirationDate, tenantId)
     return Auth(user, jwtBuilder.compact())
   }
@@ -60,7 +61,7 @@ open class AuthenticationService(private val userRepository: UserRepository,
     if (!user.active)
       throw DisabledUserException("User ${user.email} is disabled")
 
-    val expirationDate = now().plus(securityProperties.tokenExpiration)
+    val expirationDate = now().plus(Duration.parse("PT48H"))
     val jwtBuilder = tokenUtils.buildTokenFromUser(user, expirationDate, user.tenantId)
     return Auth(user, jwtBuilder.compact())
   }
