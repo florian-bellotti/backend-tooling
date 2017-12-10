@@ -3,7 +3,9 @@ package com.tooling.activity.repository
 import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
 import com.tooling.activity.model.Activity
+import com.tooling.activity.model.CodeDuration
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
@@ -11,7 +13,6 @@ import org.springframework.util.MultiValueMap
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
-import java.time.temporal.TemporalAccessor
 import java.util.*
 
 class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemplate): ActivityRepositoryCustom {
@@ -20,12 +21,12 @@ class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTem
     val query = Query(Criteria.where("tenantId").`is`(tenantId.block()))
 
     for (queryField in queryFields.entries) {
-      if ("start".equals(queryField.key)) {
+      if ("start" == queryField.key) {
         if (queryField.value.size == 1) {
           val start = Instant.ofEpochSecond(queryField.value[0].toLong())
           query.addCriteria(Criteria.where("startDate").gte(start))
         }
-      } else if ("end".equals(queryField.key)) {
+      } else if ("end" == queryField.key) {
         if (queryField.value.size == 1) {
           val end = Instant.ofEpochSecond(queryField.value[0].toLong())
           query.addCriteria(Criteria.where("endDate").lte(end))
@@ -38,11 +39,31 @@ class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTem
     return reactiveMongoTemplate.find(query, Activity::class.java)
   }
 
+  override fun findDuration(tenantId: Mono<String>, userIds: List<String>, startDate: Instant, endDate: Instant): Flux<CodeDuration> {
+    val criteria = Criteria
+      .where("tenantId").`is`(tenantId.block())
+      .and("userId").`in`(userIds)
+    /*  .and("startDate").gte(Date.from(startDate))
+      .and("endDate").lte(Date.from(endDate))*/
+
+    val aggregation = Aggregation.newAggregation(
+      Aggregation.match(criteria),
+      Aggregation.group("code", "userId").sum("duration").`as`("duration"),
+      Aggregation.project()
+        .andExpression("code").`as`("code")
+        .andExpression("userId").`as`("userId")
+        .andExpression("duration").`as`("duration")
+    )
+
+    return reactiveMongoTemplate.aggregate(aggregation, "activity", CodeDuration::class.java)
+  }
+
   override fun update(activity: Activity): Mono<UpdateResult> {
     val query = Query(Criteria
       .where("id").`is`(activity.id)
       .and("tenantId").`is`(activity.tenantId))
     val update = Update()
+    update.set("duration", activity.duration)
     update.set("startDate", activity.startDate)
     update.set("endDate", activity.endDate)
     update.set("code", activity.code)

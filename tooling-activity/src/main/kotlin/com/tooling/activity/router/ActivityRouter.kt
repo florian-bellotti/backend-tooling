@@ -13,6 +13,7 @@ open class ActivityRouter(private val activityHandler: ActivityHandler) {
   open fun activityApi() = router {
     (accept(MediaType.APPLICATION_JSON) and "/").nest {
       GET("/", activityHandler::find)
+      POST("/aggregateDurations", activityHandler::findDuration)
       POST("/", activityHandler::create)
       PUT("/", activityHandler::update)
       DELETE("/{id}", activityHandler::delete)

@@ -3,6 +3,8 @@ package com.tooling.activity.handler
 import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
 import com.tooling.activity.model.ActivityDto
+import com.tooling.activity.model.CodeDuration
+import com.tooling.activity.model.DateInterval
 import com.tooling.activity.repository.ActivityRepository
 import com.tooling.activity.service.ActivityService
 import com.tooling.core.service.HeaderReader
@@ -25,6 +27,19 @@ class ActivityHandler(private val activityService: ActivityService,
           activityRepository
             .find(tenantId, request.queryParams())
             .map { activity -> ActivityDto(activity) }, ActivityDto::class.java)
+      }
+
+  fun findDuration(request: ServerRequest) =
+    request
+      .bodyToMono(DateInterval::class.java)
+      .flatMap { interval ->
+        ServerResponse.ok().body(
+          activityRepository.findDuration(
+            HeaderReader.getTenantId(request),
+            interval.userIds,
+            interval.startDate,
+            interval.endDate
+          ), CodeDuration::class.java)
       }
 
   fun create(request: ServerRequest): Mono<ServerResponse> =

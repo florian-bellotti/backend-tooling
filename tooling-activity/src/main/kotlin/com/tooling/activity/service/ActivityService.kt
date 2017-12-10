@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @Component
 class ActivityService(private val activityRepository: ActivityRepository) {
@@ -75,7 +76,7 @@ class ActivityService(private val activityRepository: ActivityRepository) {
     HeaderReader.getTenantId(request)
       .map { tenantId ->
         Activity(activityDto.id, activityDto.userId,
-          activityDto.code, activityDto.startDate,
-          activityDto.endDate, activityDto.comment, tenantId)
+          activityDto.code, Duration.between(activityDto.startDate, activityDto.endDate).seconds,
+          activityDto.startDate, activityDto.endDate, activityDto.comment, tenantId)
       }
 }

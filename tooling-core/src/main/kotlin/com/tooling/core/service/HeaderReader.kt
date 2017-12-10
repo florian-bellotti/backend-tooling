@@ -21,6 +21,19 @@ class HeaderReader {
           tenantIds.get(0)
         }
 
+    fun getUserId(req: ServerRequest) =
+      Mono
+        .just(req.headers().header("userId"))
+        .map { userIds ->
+          if (userIds.isEmpty() || userIds.get(0) == null || userIds.get(0).isEmpty())
+            throw InvalidTenantIdException("user id is null")
+
+          if (userIds.size > 1)
+            throw InvalidTenantIdException("Multiple user id found")
+
+          userIds.get(0)
+        }
+
     fun oneRuleMatch(groups: Flux<String>, rules: Flux<String>) =
       rules
         .flatMap { rule ->
