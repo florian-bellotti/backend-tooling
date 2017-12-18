@@ -16,6 +16,7 @@ data class Activity(@Id
                     var id: String? = null,
                     var userId: String,
                     var code: String,
+                    var typeCode: String,
                     var duration: Long,
                     var startDate: Instant,
                     var endDate: Instant,

@@ -7,12 +7,13 @@ import java.time.Instant
 data class ActivityDto(var id: String? = null,
                        var userId: String,
                        var code: String,
+                       var typeCode: String,
                        var duration: Long? = null,
                        var startDate: Instant,
                        var endDate: Instant,
                        var comment: String? = null) {
 
   constructor(activity: Activity):
-    this(activity.id, activity.userId, activity.code, activity.duration,
+    this(activity.id, activity.userId, activity.code, activity.typeCode, activity.duration,
       activity.startDate, activity.endDate, activity.comment)
 }

@@ -76,7 +76,7 @@ class ActivityService(private val activityRepository: ActivityRepository) {
     HeaderReader.getTenantId(request)
       .map { tenantId ->
         Activity(activityDto.id, activityDto.userId,
-          activityDto.code, Duration.between(activityDto.startDate, activityDto.endDate).seconds,
+          activityDto.code, activityDto.typeCode, Duration.between(activityDto.startDate, activityDto.endDate).seconds,
           activityDto.startDate, activityDto.endDate, activityDto.comment, tenantId)
       }
 }

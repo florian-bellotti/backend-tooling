@@ -36,9 +36,7 @@ class ActivityHandler(private val activityService: ActivityService,
         ServerResponse.ok().body(
           activityRepository.findDuration(
             HeaderReader.getTenantId(request),
-            interval.userIds,
-            interval.startDate,
-            interval.endDate
+            interval
           ), CodeDuration::class.java)
       }
 
