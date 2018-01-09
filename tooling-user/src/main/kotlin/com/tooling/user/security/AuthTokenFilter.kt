@@ -40,6 +40,7 @@ class AuthTokenFilter(private val tokenUtils: TokenUtils) : GenericFilterBean() 
     try {
       if (StringUtils.hasText(authToken)) {
         val user = tokenUtils.buildUserFromToken(authToken)
+
         SecurityContextHolder.getContext().authentication = KeybuildAuthentication(user)
 
         mutableRequest.putHeader("userId", user.id!!)

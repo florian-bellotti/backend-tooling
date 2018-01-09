@@ -18,6 +18,10 @@ class AuthenticationController(private val authenticationService: Authentication
   fun find(@RequestParam allRequestParams: Map<String,String>, request: HttpServletRequest) =
     userService.find(request.getHeader("tenantId"), allRequestParams)
 
+  @PostMapping("/findFromList")
+  fun findAll(@RequestBody usersId: List<String>) =
+    userService.findAll(usersId)
+
   @PostMapping
   fun create(@RequestBody user: TmpUser, request: HttpServletRequest) =
     userService.create(user, request.getHeader("tenantId"), request.getHeader("grp"))

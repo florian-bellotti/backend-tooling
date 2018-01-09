@@ -39,6 +39,6 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     HeaderReader.getTenantId(request)
       .map { tenantId ->
         Project(projectDto.id,projectDto.code, projectDto.name, projectDto.description,
-          projectDto.color, projectDto.status, tenantId)
+          projectDto.color, projectDto.status, projectDto.properties, tenantId)
       }
 }

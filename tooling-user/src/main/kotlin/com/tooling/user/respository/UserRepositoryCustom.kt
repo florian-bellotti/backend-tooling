@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface UserRepositoryCustom {
   fun find(tenantId: String, queryFields: Map<String,String>): List<User>
+  fun findAll(usersId: List<String>): List<User>
   fun update(tenantId: String, user: UserDto): UpdateResult
   fun deleteByIdAndTenantId(id: String, tenantId: String): DeleteResult
 }

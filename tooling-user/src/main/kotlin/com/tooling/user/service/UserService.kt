@@ -48,7 +48,7 @@ open class UserService(private val userRepository: UserRepository,
         it.password = hashpw(it.password, gensalt())
 
         val user = userRepository.insert(User(null, it.email, it.password, it.firstName, it.lastName, it.groups,
-          it.address, it.phone, it.active, it.locale, it.activationDate, it.creationDate, tenant.id!!))
+          it.address, it.phone, it.workDuration, it.active, it.locale, it.activationDate, it.creationDate, tenant.id!!))
         logger.info("user {} created", user)
       }
     }
@@ -61,11 +61,19 @@ open class UserService(private val userRepository: UserRepository,
     return usersDto
   }
 
+  fun findAll(usersId: List<String>): List<UserDto> {
+    val users = userRepository.findAll(usersId)
+    val usersDto = ArrayList<UserDto>()
+    users.mapTo(usersDto) { UserDto(it) }
+    return usersDto
+  }
+
   fun create(user: TmpUser, tenantId: String, groups: String): User {
     oneRuleMatch(groups, ADMIN_GROUP)
     user.password = hashpw(user.password, gensalt())
     return userRepository.insert(User(null, user.email, user.password, user.firstName, user.lastName, user.groups,
-      user.address, user.phone, user.active, user.locale, user.activationDate, user.creationDate, tenantId))
+      user.address, user.phone, user.workDuration, user.active, user.locale,
+      user.activationDate, user.creationDate, tenantId))
   }
 
   fun update(user: UserDto, userId: String, tenantId: String, groups: String): UpdateResult {

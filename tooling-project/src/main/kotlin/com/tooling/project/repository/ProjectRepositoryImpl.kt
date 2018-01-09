@@ -33,6 +33,7 @@ class ProjectRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTemp
     update.set("description", project.description)
     update.set("color", project.color)
     update.set("status", project.status)
+    update.set("properties", project.properties)
     return reactiveMongoTemplate.updateFirst(query, update, Project::class.java)
   }
 

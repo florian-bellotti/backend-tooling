@@ -18,4 +18,5 @@ data class Project(@Id
                    var description: String? = null,
                    var color: String? = null,
                    var status: ProjectStatus,
+                   var properties: Map<String, ProjectProperty>? = null,
                    var tenantId: String)

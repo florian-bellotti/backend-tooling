@@ -24,6 +24,7 @@ data class User(@Id
                 var groups: MutableList<String> = mutableListOf(USER),
                 var address: String? = null,
                 var phone: String? = null,
+                var workDuration: Number? = null,
                 var active: Boolean = true,
                 var locale: Locale = Locale.getDefault(),
                 var activationDate: Instant = now(),

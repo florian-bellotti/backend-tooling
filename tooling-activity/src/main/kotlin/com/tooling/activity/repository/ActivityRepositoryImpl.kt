@@ -4,11 +4,10 @@ import com.mongodb.client.result.DeleteResult
 import com.mongodb.client.result.UpdateResult
 import com.tooling.activity.model.Activity
 import com.tooling.activity.model.CodeDuration
-import com.tooling.activity.model.DateInterval
+import com.tooling.activity.model.AggregateDurationRequest
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.GroupOperation
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
@@ -45,45 +44,46 @@ class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTem
     return reactiveMongoTemplate.find(query, Activity::class.java)
   }
 
-  override fun findDuration(tenantId: Mono<String>, interval: DateInterval): Flux<CodeDuration> {
+  override fun findDuration(tenantId: Mono<String>, aggregateDurationRequest: AggregateDurationRequest): Flux<CodeDuration> {
     val criteria = Criteria.where("tenantId").`is`(tenantId.block())
 
-    if (interval.userIds != null && interval.userIds.size > 0) {
-      criteria.and("userId").`in`(interval.userIds)
+    if (aggregateDurationRequest.userIds != null && aggregateDurationRequest.userIds.size > 0) {
+      criteria.and("userId").`in`(aggregateDurationRequest.userIds)
     }
 
-    if (interval.projects != null && interval.projects.size > 0) {
-      criteria.and("code").`in`(interval.projects)
+    if (aggregateDurationRequest.projects != null && aggregateDurationRequest.projects.size > 0) {
+      criteria.and("code").`in`(aggregateDurationRequest.projects)
     }
 
-    if (interval.startDate != null) {
-      criteria.and("startDate").gte(Date.from(interval.startDate))
-    } else {
+    if (aggregateDurationRequest.startDate != null) {
+      criteria.and("startDate").gte(Date.from(aggregateDurationRequest.startDate))
+    }
+    /*else {
       val cal = Calendar.getInstance()
       cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH))
       criteria.and("startDate").gte(Date.from(Instant.from(cal.toInstant())))
-    }
+    }*/
 
-    if (interval.endDate != null) {
-      criteria.and("endDate").gte(Date.from(interval.endDate))
+    if (aggregateDurationRequest.endDate != null) {
+      criteria.and("endDate").gte(Date.from(aggregateDurationRequest.endDate))
     }
 
     val grp: GroupOperation
     var projection = Aggregation.project().andExpression("duration").`as`("duration")
 
-    if (interval.grpByCode) {
-      if (interval.grpByType && interval.grpByUser) {
+    if (aggregateDurationRequest.grpByCode) {
+      if (aggregateDurationRequest.grpByType && aggregateDurationRequest.grpByUser) {
         grp = Aggregation.group("code", "userId", "typeCode").sum("duration").`as`("duration")
         projection = projection
           .andExpression("code").`as`("code")
           .andExpression("typeCode").`as`("typeCode")
           .andExpression("userId").`as`("userId")
-      } else if (interval.grpByType && !interval.grpByUser) {
+      } else if (aggregateDurationRequest.grpByType && !aggregateDurationRequest.grpByUser) {
         grp = Aggregation.group("code", "typeCode").sum("duration").`as`("duration")
         projection = projection
           .andExpression("code").`as`("code")
           .andExpression("typeCode").`as`("typeCode")
-      } else if (!interval.grpByType && interval.grpByUser) {
+      } else if (!aggregateDurationRequest.grpByType && aggregateDurationRequest.grpByUser) {
         grp = Aggregation.group("code", "userId").sum("duration").`as`("duration")
         projection = projection
           .andExpression("code").`as`("code")
@@ -93,10 +93,10 @@ class ActivityRepositoryImpl(private val reactiveMongoTemplate: ReactiveMongoTem
         projection = projection.andExpression("_id").`as`("code")
       }
     } else {
-        grp = Aggregation.group("userId", "typeCode").sum("duration").`as`("duration")
-        projection = projection
-          .andExpression("typeCode").`as`("typeCode")
-          .andExpression("userId").`as`("userId")
+      grp = Aggregation.group("userId", "typeCode").sum("duration").`as`("duration")
+      projection = projection
+        .andExpression("typeCode").`as`("typeCode")
+        .andExpression("userId").`as`("userId")
     }
 
 

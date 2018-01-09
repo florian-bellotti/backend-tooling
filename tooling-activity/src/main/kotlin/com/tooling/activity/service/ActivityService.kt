@@ -18,6 +18,10 @@ class ActivityService(private val activityRepository: ActivityRepository) {
     val ADMIN_GROUP = Flux.just("ADMIN", "ACTIVITY_ADMIN")
   }
 
+  /*fun findDurationInDay(request: ServerRequest) =
+     activityRepository.findDuration(HeaderReader.getTenantId(request))
+*/
+
   fun insert(activityDto: ActivityDto, request: ServerRequest, userIds: Mono<List<String>>, groups: Flux<String>) =
     userIds
       .flatMap { ids ->

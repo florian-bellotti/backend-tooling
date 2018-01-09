@@ -11,7 +11,9 @@ data class UserDto(var id: String? = null,
                    var groups: MutableList<String> = mutableListOf(Group.USER),
                    var address: String? = null,
                    var phone: String? = null,
+                   var workDuration: Number? = null,
                    var active: Boolean,
                    var locale: Locale) {
-  constructor(user: User): this(user.id!!, user.email, user.firstName, user.lastName, user.groups, user.address, user.phone, user.active, user.locale)
+  constructor(user: User): this(user.id!!, user.email, user.firstName, user.lastName,
+    user.groups, user.address, user.phone, user.workDuration, user.active, user.locale)
 }
